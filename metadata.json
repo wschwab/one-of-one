@@ -1,0 +1,41 @@
+{
+  "title": "Asset Metadata",
+  "type": "object",
+  "name": "Will, by Yamer",
+  "description": "A profile picture by Yamer, commissioned by wschwab.eth",
+  "image": "QmbCVM7tWPSPst19jJ4gvv42year2Q5WdHUG3Q2FTTqW5i",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Yamer"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Cyberspace"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "ECH Fedora"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Reflective Glasses"
+    },
+    {
+      "trait_type": "Mouth",
+      "value": "Happy Open"
+    },
+    {
+      "trait_type": "Facial Hair",
+      "value": "Beard"
+    },
+    {
+      "trait_type": "Shirt",
+      "value": "White Oxford"
+    },
+    {
+      "trait_type": "Pose",
+      "value": "Action"
+    }
+  ]
+}
