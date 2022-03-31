@@ -26,7 +26,7 @@ This also assumes that you have the metadata somewhere off chain. Maybe building
 
 THERE ARE NO TESTS ON THIS CONTRACT YET, USE AT YOUR OWN RISK
 
-Obviously, this contract doesn't work without an ENS address.
+Obviously, this contract doesn't work without an ENS address. Further, since it uses the ENS contracts, it can only be deployed on mainnet, at least for now. (ENS has been making strides towards deploying on an L2, and recently got an EIP to Final for a message-bridging structure called [CCIP](https://eips.ethereum.org/EIPS/eip-3668).)
 
 It is impossible to update roughly anything in this contract. The URI cannot be changed, the ENS namehash cannot be changed. Even the ENS contract address can't be changed. (Though you can change resolvers for your ENS name since ENS will be queried to see which resolver to use.)
 
@@ -34,7 +34,9 @@ As a result, a self-destruct function exists. (In fact, it's the only state-chan
 
 This NFT cannot be transferred. You can't even approve someone on this NFT. It is meant to stay bound to one ENS namehash for as long as the contract lives. Really. If you want to transfer it that bad, transfer your ENS to the recipient.
 
-## Additional Ideas
+## Additional Ideas / TODO
+
+The immediate things are writing tests and getting a deployment script. The tests should optimally fork mainnet in order to test the ENS integration, otherwise impersonating calls may need to be used if that's even possible to get `resolveAddress` to work.
 
 Using [CREATE3](https://github.com/0xsequence/create3) to make the contract redeployable at the same address if something changes and it needs to redeployed would be a cool addition.
 
