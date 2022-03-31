@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-interface ENS {
-  function resolver(bytes32 node) external returns(address);
-}
-
 /// @title 1-of-1 optimized Soulbound NFT contract
 /// @author wschwab
 /// @notice based on idea from Ross: https://gist.github.com/z0r0z/ea0b752aa9537070b0d61f8a74d5c10c
@@ -19,20 +15,21 @@ contract OneOfOne {
   error EnsCallFailed();
   error ResolverCallFailed();
   error Soulbound(string message);
+  error Unauthorized();
 
   /*///////////////////////////////////////////////////////////////
                         GLOBAL VARIABLES
   //////////////////////////////////////////////////////////////*/
 
-  string public immutable name;
-  string public immutable symbol;
-  string internal immutable URI;
+  string public constant name = "1-of-1 Soulbound";
+  string public constant symbol = "1O1S";
+  string constant URI = "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
   /// @notice there is only one NFT, so we don't need a mapping
   /// @dev bytes32 is used since we're mapping to an ENS name
-  bytes32 internal immutable owner;
+  bytes32 internal immutable namehash;
+  /// @notice the ENS contract, needed to find the namehash's resolver
+  address internal immutable ens;
 
-  ENS immutable ens;
-  bytes32 immutable namehash;
 
   /*///////////////////////////////////////////////////////////////
                               EVENTS
@@ -47,20 +44,11 @@ contract OneOfOne {
   //////////////////////////////////////////////////////////////*/
 
   constructor(
-      string memory _name, 
-      string memory _symbol,
-      string memory _URI,
       address _ens,
       bytes32 _namehash
   ) {
-    // ENS vars
-    ens = ENS(_ens);
+    ens = _ens;
     namehash = _namehash;
-
-    // ERC721 vars
-    name = _name;
-    symbol = _symbol;
-    URI = _URI;
 
     // NFT is hardcoded in, all we need is the event
     emit Transfer(address(0), msg.sender, 0);
@@ -76,7 +64,7 @@ contract OneOfOne {
 
   function ownerOf(uint256 tokenId) public view returns(address) {
     if(tokenId != 0) revert TokenIdDoesNotExist();
-    return resolveAddress;
+    return resolveAddress();
   }
 
   function tokenURI(uint256 tokenId) public view returns (string memory) {
@@ -89,22 +77,23 @@ contract OneOfOne {
   //////////////////////////////////////////////////////////////*/
 
   function resolveAddress() public view returns(address) {
-    (bool success, bytes memory returndata) = ens.staticall(
+    (bool success, bytes memory returndata) = ens.staticcall(
       abi.encodeWithSignature(
         "resolver(bytes32)",
         namehash
       )
     );
     if(!success) revert EnsCallFailed();
-    address resolver = address(returndata);
-    (success, returndata) = resolver.staticall(
+    address resolver = abi.decode(returndata, (address));
+    (success, returndata) = resolver.staticcall(
       abi.encodeWithSignature(
         "addr(bytes32)",
         namehash
       )
     );
     if(!success) revert ResolverCallFailed();
-    return address(returndata);
+    address owner = abi.decode(returndata, (address));
+    return owner;
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -173,5 +162,18 @@ contract OneOfOne {
     address operator
   ) public pure {
     revert Soulbound("SOULBOUND");
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                            SELF-DESTRUCT
+  //////////////////////////////////////////////////////////////*/
+
+  /// @notice allows destruction of contract
+  /// @dev intended if ENS domain will expire, ENS migrates, or otherwise
+  /// @dev can only be called by namehash set in constructor
+  function selfDestruct() public {
+    address owner = resolveAddress();
+    if(msg.sender != owner) revert Unauthorized();
+    selfdestruct(payable(owner));
   }
 }
