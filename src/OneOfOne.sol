@@ -23,12 +23,12 @@ contract OneOfOne {
 
   string public constant name = "1-of-1 Soulbound";
   string public constant symbol = "1O1S";
-  string constant URI = "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
+  string private constant URI = "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
   /// @notice there is only one NFT, so we don't need a mapping
   /// @dev bytes32 is used since we're mapping to an ENS name
-  bytes32 internal immutable namehash;
+  bytes32 private immutable namehash;
   /// @notice the ENS contract, needed to find the namehash's resolver
-  address internal immutable ens;
+  address private immutable ens;
 
 
   /*///////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ contract OneOfOne {
     namehash = _namehash;
 
     // NFT is hardcoded in, all we need is the event
-    emit Transfer(address(0), msg.sender, 0);
+    emit Transfer(address(0), resolveAddress(), 0);
   }
 
   /*///////////////////////////////////////////////////////////////
