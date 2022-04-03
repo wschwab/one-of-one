@@ -24,8 +24,7 @@ contract OneOfOne {
   string public constant name = "1-of-1 Soulbound";
   string public constant symbol = "1O1S";
   string private constant URI = "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
-  /// @notice there is only one NFT, so we don't need a mapping
-  /// @dev bytes32 is used since we're mapping to an ENS name
+  /// @notice ENS namehash used to determine NFT owner
   bytes32 private immutable namehash;
   /// @notice the ENS contract, needed to find the namehash's resolver
   address private immutable ens;
@@ -160,8 +159,8 @@ contract OneOfOne {
   function isApprovedForAll(
     address owner,
     address operator
-  ) public pure {
-    revert Soulbound("SOULBOUND");
+  ) public pure returns(bool) {
+    return false;
   }
 
   /*///////////////////////////////////////////////////////////////

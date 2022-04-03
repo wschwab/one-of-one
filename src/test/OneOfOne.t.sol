@@ -6,7 +6,8 @@ import "../OneOfOne.sol";
 
 interface CheatCodes {
   function prank(address) external;
-  function expectRevert(bytes calldata) external;
+  function expectRevert(bytes calldata msg) external;
+  function expectRevert(bytes4) external;
   function expectEmit(
     bool,
     bool,
@@ -18,10 +19,12 @@ interface CheatCodes {
 contract ContractTest is DSTest {
   OneOfOne ooo;
   CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
-  address wschwab = address(0x7BfAf4C59aA4F011672b8e77789e1eb41abd654d);
+  address owner = address(0x7BfAf4C59aA4F011672b8e77789e1eb41abd654d);
 
   function setUp() public {
-    // test event emission, if possible
+    // TODO: throws error that Transfer not found
+    // cheats.expectEmit(true, true, true, false);
+    // emit OneOfOne.Transfer(address(0), owner, 0);
     ooo = new OneOfOne(
       address(0x314159265dD8dbb310642f98f50C066173C1259b),
       0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
@@ -41,11 +44,12 @@ contract ContractTest is DSTest {
   }
 
   function testOwnerOf() public {
-    assertEq(ooo.ownerOf(0), wschwab);
+    assertEq(ooo.ownerOf(0), owner);
   }
 
-  function testBalanceOf() public {
-    assertEq(ooo.balanceOf(wschwab), 1);
+  function testBalanceOf(address accts) public {
+    assertEq(ooo.balanceOf(owner), 1);
+    assertEq(ooo.balanceOf(accts), 0);
   }
 
   function testURI() public {
@@ -53,7 +57,7 @@ contract ContractTest is DSTest {
   }
 
   function testResolveAddress() public {
-    assertEq(ooo.resolveAddress(), wschwab);
+    assertEq(ooo.resolveAddress(), owner);
   }
 
   function testSupportsInterface() public {
@@ -63,24 +67,81 @@ contract ContractTest is DSTest {
     assertTrue(ooo.supportsInterface(bytes4(0x150b7a02)));
     // ERC165
     assertTrue(ooo.supportsInterface(bytes4(0x01ffc9a7)));
-    // TODO: Not working since assertEq doesn't have a bytes4 version
-    // // mandated by ERC165
-    // assertEq(ooo.supportsInterface(bytes4(0xffffffff)), false);
-    // // lastly, a random interface
-    // assertEq(ooo.supportsInterface(bytes4(0xabcdef01)), false);
+    // mandated by ERC165 to be false
+    assertTrue(!ooo.supportsInterface(bytes4(0xffffffff)));
+    // lastly, a random interface to be false
+    assertTrue(!ooo.supportsInterface(bytes4(0xabcdef01)));
   }
 
   function testSelfDestruct() public {
     address oooAddress = address(ooo);
-    cheats.prank(ooo.resolveAddress());
+    cheats.prank(owner);
     ooo.selfDestruct();
     // mine block to trigger destruct
     // expect bytecode size to be 0
   }
 
-  function testOwnerOfOnNonexistant() public {}
-  function testBalanceOfOnNonOwner() public {}
-  function testURIOnNonExistant() public {}
-  function testSoulbound() public {}
-  function testSelfDestructByNonOwner() public {}
+  function testOwnerOfOnNonexistant() public {
+    cheats.expectRevert(OneOfOne.TokenIdDoesNotExist.selector);
+    ooo.ownerOf(1);
+  }
+
+  function testURIOnNonExistant() public {
+    cheats.expectRevert(OneOfOne.TokenIdDoesNotExist.selector);
+    ooo.tokenURI(1);
+  }
+
+  function testSoulbound(address target, uint256 tokenId) public {
+    cheats.expectRevert(
+       abi.encodeWithSelector(
+        OneOfOne.Soulbound.selector, 
+        bytes("SOULBOUND")
+      )
+    );
+    cheats.prank(owner);
+    ooo.safeTransferFrom(owner, target, tokenId);
+
+    cheats.expectRevert(
+      abi.encodeWithSelector(
+        OneOfOne.Soulbound.selector, 
+        bytes("SOULBOUND")
+      )
+    );
+    cheats.prank(owner);
+    ooo.safeTransferFrom(owner, target, tokenId, bytes("hello, revert"));
+
+    cheats.expectRevert(
+      abi.encodeWithSelector(
+        OneOfOne.Soulbound.selector, 
+        bytes("SOULBOUND")
+      )
+    );
+    cheats.prank(owner);
+    ooo.transferFrom(owner, target, tokenId);
+
+    cheats.expectRevert(
+      abi.encodeWithSelector(
+        OneOfOne.Soulbound.selector, 
+        bytes("SOULBOUND")
+      )
+    );
+    cheats.prank(owner);
+    ooo.approve(target, tokenId);
+
+    cheats.expectRevert(
+      abi.encodeWithSelector(
+        OneOfOne.Soulbound.selector, 
+        bytes("SOULBOUND")
+      )
+    );
+    cheats.prank(owner);
+    ooo.setApprovalForAll(target, true);
+
+    assertTrue(!ooo.isApprovedForAll(owner, target));
+  }
+
+  function testSelfDestructByNonOwner() public {
+    cheats.expectRevert(OneOfOne.Unauthorized.selector);
+    ooo.selfDestruct();
+  }
 }
