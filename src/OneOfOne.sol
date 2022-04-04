@@ -58,7 +58,7 @@ contract OneOfOne {
   //////////////////////////////////////////////////////////////*/
 
   function balanceOf(address account) public view returns(uint256) {
-    account == resolveAddress() ? 1 : 0;
+    return account == resolveAddress() ? 1 : 0;
   }
 
   function ownerOf(uint256 tokenId) public view returns(address) {

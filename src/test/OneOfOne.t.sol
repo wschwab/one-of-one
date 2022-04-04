@@ -73,14 +73,6 @@ contract ContractTest is DSTest {
     assertTrue(!ooo.supportsInterface(bytes4(0xabcdef01)));
   }
 
-  function testSelfDestruct() public {
-    address oooAddress = address(ooo);
-    cheats.prank(owner);
-    ooo.selfDestruct();
-    // mine block to trigger destruct
-    // expect bytecode size to be 0
-  }
-
   function testOwnerOfOnNonexistant() public {
     cheats.expectRevert(OneOfOne.TokenIdDoesNotExist.selector);
     ooo.ownerOf(1);
