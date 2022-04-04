@@ -1,9 +1,5 @@
 # One-of-One Soulbound
 
-## **THERE ARE NO TESTS ON THIS CONTRACT YET, USE AT YOUR OWN RISK**
-
-## 🚧 STILL A WORK IN PROGRESS 👷👨‍🔧🔨🔨🔨 🚧
-
 This is a minimalist one-of-one NFT contract with a couple of twists that are perhaps best illustrated with a brief description of what propelled me to write this contract.
 
 I got a profile picture commissioned by [Yamer](https://yamerpro.com), and was interested in turning it into an NFT. [Ross](https://twitter.com/z0r0zzz) had posted an idea for a [one-NFT contract](https://gist.github.com/z0r0z/ea0b752aa9537070b0d61f8a74d5c10c), but it got me thinking about how it technically still contained a lot of features I didn't need. I also sort of got into a groove where I wanted to see how much of the contract I could set in stone and make completely immutable, for for fun than for any serious reason. I didn't plan on ever selling/transferring the NFT to anyone else, which reminded me of Vitalik's [Soulbound](https://vitalik.eth.limo/general/2022/01/26/soulbound.html) blog post (great read, btw).
@@ -24,8 +20,6 @@ This also assumes that you have the metadata somewhere off chain. Maybe building
 
 ## Limitations / Potential Gotchas
 
-THERE ARE NO TESTS ON THIS CONTRACT YET, USE AT YOUR OWN RISK
-
 Obviously, this contract doesn't work without an ENS address. Further, since it uses the ENS contracts, it can only be deployed on mainnet, at least for now. (ENS has been making strides towards deploying on an L2, and recently got an EIP to Final for a message-bridging structure called [CCIP](https://eips.ethereum.org/EIPS/eip-3668).)
 
 It is impossible to update roughly anything in this contract. The URI cannot be changed, the ENS namehash cannot be changed. Even the ENS contract address can't be changed. (Though you can change resolvers for your ENS name since ENS will be queried to see which resolver to use.)
@@ -36,8 +30,6 @@ This NFT cannot be transferred. You can't even approve someone on this NFT. It i
 
 ## Additional Ideas / TODO
 
-The immediate things are writing tests and getting a deployment script. The tests should optimally fork mainnet in order to test the ENS integration, otherwise impersonating calls may need to be used if that's even possible to get `resolveAddress` to work.
-
 Using [CREATE3](https://github.com/0xsequence/create3) to make the contract redeployable at the same address if something changes and it needs to redeployed would be a cool addition.
 
 Building the metadata JSON on chain would also be cool, though as mentioned earlier, the image would still likely need to be hosted off chain.
@@ -45,5 +37,7 @@ Building the metadata JSON on chain would also be cool, though as mentioned earl
 ## Additional Details
 
 * This contract was built using Foundry. This makes me look like I know what I'm doing and generally impresses people, which is why I use it.
+* There is a test suite which tests every function in the contract other than `selfDestruct`, which I could not figure out a good way to test in Foundry, as I'd want to see the code size go to zero, which is multi-block, and Foundry tests afaik don't have a way to test that. Lmk if I'm wrong about that.
+* If you'd like to run the tests, you should do so forking mainnet so the ENS parts work. If you have an API key to a node endpoint (such as Alchemy), then all you need to do is run `forge test --fork-url <URL WITH API KEY HERE>`
 * There is a sample metadata JSON in the root of the repo which should be LooksRare/OpenSea compatible, though I have not yet tested that out.
 * I'm open to other ideas and suggestions, feel free to open an issue or PR here, or hmu on [Twitter](https://twitter.com/wschwab_)
