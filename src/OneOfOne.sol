@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
+import "../lib/create3/contracts/Create3.sol";
+
 /// @title 1-of-1 optimized Soulbound NFT contract
 /// @author wschwab
 /// @notice based on idea from Ross: https://gist.github.com/z0r0z/ea0b752aa9537070b0d61f8a74d5c10c
@@ -174,5 +176,19 @@ contract OneOfOne {
     address owner = resolveAddress();
     if(msg.sender != owner) revert Unauthorized();
     selfdestruct(payable(owner));
+  }
+}
+
+// ______________________________   ___________________________________  
+// \_   ___ \______   \_   _____/  /  _  \__    ___/\_   _____/\_____  \ 
+// /    \  \/|       _/|    __)_  /  /_\  \|    |    |    __)_   _(__  < 
+// \     \___|    |   \|        \/    |    \    |    |        \ /       \
+//  \______  /____|_  /_______  /\____|__  /____|   /_______  //______  /
+//         \/       \/        \/         \/                 \/        \/ 
+
+contract Deployer {
+  constructor {
+    Create3.create3(keccak256(bytes("One-of-One Soulborn")), type(OneOfOne).creationCode);
+    selfdestruct(payable(address(0)));
   }
 }

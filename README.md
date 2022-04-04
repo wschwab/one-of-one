@@ -30,7 +30,7 @@ This NFT cannot be transferred. You can't even approve someone on this NFT. It i
 
 ## Additional Ideas / TODO
 
-Using [CREATE3](https://github.com/0xsequence/create3) to make the contract redeployable at the same address if something changes and it needs to redeployed would be a cool addition.
+Using [CREATE3](https://github.com/0xsequence/create3) to make the contract redeployable at the same address if something changes and it needs to redeployed would be a cool addition. (This has been started on a branch.)
 
 Building the metadata JSON on chain would also be cool, though as mentioned earlier, the image would still likely need to be hosted off chain.
 
