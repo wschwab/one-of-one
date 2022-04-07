@@ -64,7 +64,7 @@ contract ContractTest is DSTest {
     // ERC721
     assertTrue(ooo.supportsInterface(bytes4(0x80ac58cd)));
     // ERC721Metadata
-    assertTrue(ooo.supportsInterface(bytes4(0x150b7a02)));
+    assertTrue(ooo.supportsInterface(bytes4(0x5b5e139f)));
     // ERC165
     assertTrue(ooo.supportsInterface(bytes4(0x01ffc9a7)));
     // mandated by ERC165 to be false
