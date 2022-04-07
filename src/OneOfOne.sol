@@ -187,7 +187,7 @@ contract OneOfOne {
 //         \/       \/        \/         \/                 \/        \/ 
 
 contract Deployer {
-  constructor {
+  constructor() {
     Create3.create3(keccak256(bytes("One-of-One Soulborn")), type(OneOfOne).creationCode);
     selfdestruct(payable(address(0)));
   }
