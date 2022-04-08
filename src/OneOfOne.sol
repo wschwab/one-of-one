@@ -104,7 +104,7 @@ contract OneOfOne {
   function supportsInterface(bytes4 iface) public pure returns(bool) {
     return (
       iface == 0x80ac58cd     // ERC721
-      || iface == 0x150b7a02  // ERC721Metadata
+      || iface == 0x5b5e139f  // ERC721Metadata
       || iface == 0x01ffc9a7  // ERC165
     );
   }
