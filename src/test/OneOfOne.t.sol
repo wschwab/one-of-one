@@ -21,10 +21,11 @@ contract ContractTest is DSTest {
   CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
   address owner = address(0x7BfAf4C59aA4F011672b8e77789e1eb41abd654d);
 
+  event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+
   function setUp() public {
-    // TODO: throws error that Transfer not found
-    // cheats.expectEmit(true, true, true, false);
-    // emit OneOfOne.Transfer(address(0), owner, 0);
+    cheats.expectEmit(true, true, true, false);
+    emit Transfer(address(0), owner, 0);
     ooo = new OneOfOne(
       address(0x314159265dD8dbb310642f98f50C066173C1259b),
       0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
