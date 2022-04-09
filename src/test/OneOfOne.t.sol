@@ -54,7 +54,7 @@ contract ContractTest is DSTest {
   }
 
   function testURI() public {
-    assertEq(ooo.tokenURI(0), "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW");
+    assertEq(ooo.tokenURI(0), "ipfs//:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW");
   }
 
   function testResolveAddress() public {
