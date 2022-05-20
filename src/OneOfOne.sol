@@ -25,7 +25,7 @@ contract OneOfOne {
 
   string public constant name = "1-of-1 Soulbound";
   string public constant symbol = "1O1S";
-  string private constant URI = "ipfs:QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
+  string private constant URI = "ipfs://QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
   /// @notice ENS namehash used to determine NFT owner
   bytes32 private immutable namehash;
   /// @notice the ENS contract, needed to find the namehash's resolver
