@@ -16,6 +16,11 @@ interface CheatCodes {
   ) external;
 }
 
+interface IXDeployer {
+  function deploy(uint256 value, bytes32 salt, bytes memory code) external;
+  function computeAddress(bytes32 salt, bytes32 codeHash) external returns(address);
+}
+
 contract ContractTest is DSTest {
   OneOfOne ooo;
   CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
@@ -136,5 +141,48 @@ contract ContractTest is DSTest {
   function testSelfDestructByNonOwner() public {
     cheats.expectRevert(OneOfOne.Unauthorized.selector);
     ooo.selfDestruct();
+  }
+
+  function testCreate3() public {
+    Deployer d = new Deployer();
+  }
+
+  function testXDeployer() public {
+    IXDeployer x = IXDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
+    emit logs(type(OneOfOne).creationCode);
+    emit log_bytes32(keccak256(bytes("One-of-One Soulborn")));
+    x.deploy(
+      0,
+      keccak256(bytes("One-of-One Soulborn")),
+      abi.encodePacked(
+        type(OneOfOne).creationCode,
+        abi.encode(
+          0x314159265dD8dbb310642f98f50C066173C1259b,
+          0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
+        )
+      )
+    );
+    address deployedOOO = x.computeAddress(
+      keccak256(bytes("One-of-One Soulborn")),
+      keccak256(
+        abi.encodePacked(
+          type(OneOfOne).creationCode,
+          abi.encode(
+            0x314159265dD8dbb310642f98f50C066173C1259b,
+            0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
+          )
+        )
+      )
+    );
+    emit log_bytes32(keccak256(
+        abi.encodePacked(
+          type(OneOfOne).creationCode,
+          abi.encode(
+            0x314159265dD8dbb310642f98f50C066173C1259b,
+            0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
+          )
+        )
+      ));
+    OneOfOne xooo = OneOfOne(deployedOOO);
   }
 }

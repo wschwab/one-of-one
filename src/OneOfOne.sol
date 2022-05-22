@@ -188,7 +188,16 @@ contract OneOfOne {
 
 contract Deployer {
   constructor() {
-    Create3.create3(keccak256(bytes("One-of-One Soulborn")), type(OneOfOne).creationCode);
+    Create3.create3(
+      keccak256(bytes("One-of-One Soulborn")), 
+      abi.encodePacked(
+        type(OneOfOne).creationCode,
+        abi.encode(
+          0x314159265dD8dbb310642f98f50C066173C1259b,
+          0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
+        )
+      )
+    );
     selfdestruct(payable(address(0)));
   }
 }
