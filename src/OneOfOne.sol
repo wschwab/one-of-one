@@ -190,19 +190,13 @@ interface IxDeployer {
 }
 
 contract DeployToxDeployer {
+  address ens = address(0x314159265dD8dbb310642f98f50C066173C1259b);
+  bytes32 namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
+  IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
+  bytes code = abi.encodePacked(type(OneOfOne).creationCode, abi.encode(ens, namehash));
+  bytes32 salt = keccak256(abi.encode("One-of-One Soulbound"));
   constructor() {
-    address ENS = 0x314159265dD8dbb310642f98f50C066173C1259b;
-    bytes32 namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
-    IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
-    x.deploy(
-      0,
-      keccak256("One-of-One Soulborn"),
-      abi.encode(
-        type(OneOfOne).creationCode,
-        address(0x314159265dD8dbb310642f98f50C066173C1259b),
-        bytes32(0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985)
-      )
-    );
+    x.deploy(0, salt, code);
     selfdestruct(payable(address(0)));
   }
 }
