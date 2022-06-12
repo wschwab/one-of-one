@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "../lib/create3/contracts/Create3.sol";
-
 /// @title 1-of-1 optimized Soulbound NFT contract
 /// @author wschwab
 /// @notice based on idea from Ross: https://gist.github.com/z0r0z/ea0b752aa9537070b0d61f8a74d5c10c
@@ -179,24 +177,24 @@ contract OneOfOne {
   }
 }
 
-// ______________________________   ___________________________________  
-// \_   ___ \______   \_   _____/  /  _  \__    ___/\_   _____/\_____  \ 
-// /    \  \/|       _/|    __)_  /  /_\  \|    |    |    __)_   _(__  < 
-// \     \___|    |   \|        \/    |    \    |    |        \ /       \
-//  \______  /____|_  /_______  /\____|__  /____|   /_______  //______  /
-//         \/       \/        \/         \/                 \/        \/ 
+//         ________                .__                             
+// ___  ___\______ \   ____ ______ |  |   ____ ___.__. ___________ 
+// \  \/  / |    |  \_/ __ \\____ \|  |  /  _ <   |  |/ __ \_  __ \
+//  >    <  |    `   \  ___/|  |_> >  |_(  <_> )___  \  ___/|  | \/
+// /__/\_ \/_______  /\___  >   __/|____/\____// ____|\___  >__|   
+//       \/        \/     \/|__|               \/         \/       
 
-contract Deployer {
+interface IxDeployer {
+  function deploy(uint256 value, bytes32 salt, bytes code) external;
+}
+
+contract DeployToxDeployer {
+  //TODO: missing how to encode constructor args
   constructor() {
-    Create3.create3(
-      keccak256(bytes("One-of-One Soulborn")), 
-      abi.encodePacked(
-        type(OneOfOne).creationCode,
-        abi.encode(
-          0x314159265dD8dbb310642f98f50C066173C1259b,
-          0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
-        )
-      )
+    IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2).deploy(
+      0,
+      keccak256("One-of-One Soulborn"),
+      type(OneOfOne).creationCode;
     );
     selfdestruct(payable(address(0)));
   }

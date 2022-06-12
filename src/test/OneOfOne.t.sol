@@ -143,10 +143,6 @@ contract ContractTest is DSTest {
     ooo.selfDestruct();
   }
 
-  function testCreate3() public {
-    Deployer d = new Deployer();
-  }
-
   function testXDeployer() public {
     IXDeployer x = IXDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
     emit logs(type(OneOfOne).creationCode);
@@ -184,5 +180,9 @@ contract ContractTest is DSTest {
         )
       ));
     OneOfOne xooo = OneOfOne(deployedOOO);
+  }
+
+  function testDeployer() public {
+    DeployToxDeployer d = new DeployToxDeployer();
   }
 }
