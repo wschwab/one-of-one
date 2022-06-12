@@ -185,16 +185,23 @@ contract OneOfOne {
 //       \/        \/     \/|__|               \/         \/       
 
 interface IxDeployer {
-  function deploy(uint256 value, bytes32 salt, bytes code) external;
+  function deploy(uint256 value, bytes32 salt, bytes memory code) external;
+  function computeAddress(bytes32 salt, bytes32 codehash) external returns(address);
 }
 
 contract DeployToxDeployer {
-  //TODO: missing how to encode constructor args
   constructor() {
-    IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2).deploy(
+    address ENS = 0x314159265dD8dbb310642f98f50C066173C1259b;
+    bytes32 namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
+    IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
+    x.deploy(
       0,
       keccak256("One-of-One Soulborn"),
-      type(OneOfOne).creationCode;
+      abi.encode(
+        type(OneOfOne).creationCode,
+        address(0x314159265dD8dbb310642f98f50C066173C1259b),
+        bytes32(0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985)
+      )
     );
     selfdestruct(payable(address(0)));
   }

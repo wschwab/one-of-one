@@ -170,7 +170,8 @@ contract ContractTest is DSTest {
         )
       )
     );
-    emit log_bytes32(keccak256(
+    emit log_bytes32(
+      keccak256(
         abi.encodePacked(
           type(OneOfOne).creationCode,
           abi.encode(
@@ -178,7 +179,9 @@ contract ContractTest is DSTest {
             0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
           )
         )
-      ));
+      )
+    );
+    emit log_address(deployedOOO);
     OneOfOne xooo = OneOfOne(deployedOOO);
   }
 
