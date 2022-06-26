@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.15;
 
 /// @title 1-of-1 optimized Soulbound NFT contract
 /// @author wschwab
@@ -66,7 +66,7 @@ contract OneOfOne {
     return resolveAddress();
   }
 
-  function tokenURI(uint256 tokenId) public view returns (string memory) {
+  function tokenURI(uint256 tokenId) public pure returns (string memory) {
     if(tokenId != 0) revert TokenIdDoesNotExist();
     return URI;
   }

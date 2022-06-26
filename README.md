@@ -8,11 +8,16 @@ Still, what if I wanted to migrate my main account? I'd had an idea for other pr
 
 With all that in mind, the contract here is designed to only represent one NFT, with the ERC721 metadata (name, symbol, URI) set in the contract code as [constants](https://docs.soliditylang.org/en/v0.8.13/contracts.html#constant-and-immutable-state-variables). ([Immutable](https://docs.soliditylang.org/en/v0.8.13/contracts.html#constant-and-immutable-state-variables) would have been more generalizable, but strings cannot be set to `immutable` as of this writing.) Any ERC721 functions related to transferring are implemented in order to comply with the [ERC721 standard](https://eips.ethereum.org/EIPS/eip-721), but automatically revert. Ownership of the one NFT is determined by determining the address associated with a particular ENS address (namehash), which is set in the constructor.
 
+The OneOfOne NFT contract was deployed to mainnet on June 26th 2022 using the included xDeployer `Deployer` contract (included in `OneOfOne.sol`) in [this](https://etherscan.io/tx/0x5d4b7f26c6864a70dcd5afd15e0408bd6c5ee694f20b8dd64e2ed48eaa3bc947). The address of the NFT contract is [0xd5b6c0987a414e06f8891698d37f20bca28750f0](https://etherscan.io/token/0xd5b6c0987a414e06f8891698d37f20bca28750f0).
+
+Special thanks to [ZeroEkkusu](https://twitter.com/ZeroEkkusu00x) for catching bugs in the original contract, and thanks to [pcaversaccio](https://twitter.com/pcaversaccio) (the author/maintainer of xDeployer) for helping me with some deployment issues.
+
 ## How to use this contract for yourself
 
 1. Change the name and symbol to whatever you'd like them to be (otherwise it'll be my pfp)
 2. Set the URI to the URI of the JSON metadata for your NFT
 3. Deploy (there currently is not a deploy script in this repo) with the arguments of the ENS entry contract (currently `0x314159265dd8dbb310642f98f50c066173c1259b`) and the namehash of the ENS address you're binding the NFT to
+4. If you're using the `Deployer` contract you'll need to come up with a new salt, see below (in the Deployer section) for more details
 
 (Quick aside: to get the namehash of a particular NFT address, the easiest way is likely cast, a part of [Foundry](https://github.com/gakonst/foundry). If you have Foundry installed, simply run `cast namehash <ENS name>`, eg `cast namehash vitalik.eth`. There is also a `namehash` function in Ethers.js which takes the string of the ENS name as an argument. Afaict there is no function in the ENS contracts for determining the namehash of a particular ENS name.)
 
@@ -28,9 +33,15 @@ As a result, a self-destruct function exists. (In fact, it's the only state-chan
 
 This NFT cannot be transferred. You can't even approve someone on this NFT. It is meant to stay bound to one ENS namehash for as long as the contract lives. Really. If you want to transfer it that bad, transfer your ENS to the recipient.
 
-## Additional Ideas / TODO
+## Deployer
 
-Using [CREATE3](https://github.com/0xsequence/create3) to make the contract redeployable at the same address if something changes and it needs to redeployed would be a cool addition. (This has been started on a branch.)
+`OneOfOne.sol` also includes a one-use deployer for deploying `OneOfOne` deterministically. It uses [xDeployer](https://github.com/pcaversaccio/xdeployer), and special thanks to author pcaversaccio for saving the day when I couldn't get a test deployment to work.
+
+The deployer deploys OneOfOne using xDeployer, and then self-destructs. I can't say that there is specifically a good reason for this other than why not.
+
+If you do want to use the `Deployer` contract to deploy the OneOfOne NFT contract (or any other contract, for that matter) you'll need to change the salt - `keccak256(bytes("One-of-One Soulbound"))` already has code deployed to it.
+
+## Additional Ideas / TODO
 
 Building the metadata JSON on chain would also be cool, though as mentioned earlier, the image would still likely need to be hosted off chain.
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.15;
 
 import "ds-test/test.sol";
 import "../OneOfOne.sol";
@@ -160,6 +160,11 @@ contract ContractTest is DSTest {
       salt,
       keccak256(code)
     );
+    // helper to have the deploy code output
+    emit log_bytes(code);
+    // helper to output the salt
+    emit log_bytes32(salt);
+    // helper to output projected address
     emit log_address(deployedOOO);
     ooo = OneOfOne(deployedOOO);
 
