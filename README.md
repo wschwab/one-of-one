@@ -1,5 +1,8 @@
 # One-of-One Soulbound
 
+[![🕵️‍♂️ Test smart contracts](https://github.com/wschwab/one-of-one/actions/workflows/test-contracts.yml/badge.svg)](https://github.com/wschwab/one-of-one/actions/workflows/test-contracts.yml)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+
 This is a minimalist one-of-one NFT contract with a couple of twists that are perhaps best illustrated with a brief description of what propelled me to write this contract.
 
 I got a profile picture commissioned by [Yamer](https://yamerpro.com), and was interested in turning it into an NFT. [Ross](https://twitter.com/z0r0zzz) had posted an idea for a [one-NFT contract](https://gist.github.com/z0r0z/ea0b752aa9537070b0d61f8a74d5c10c), but it got me thinking about how it technically still contained a lot of features I didn't need. I also sort of got into a groove where I wanted to see how much of the contract I could set in stone and make completely immutable, for for fun than for any serious reason. I didn't plan on ever selling/transferring the NFT to anyone else, which reminded me of Vitalik's [Soulbound](https://vitalik.eth.limo/general/2022/01/26/soulbound.html) blog post (great read, btw).
