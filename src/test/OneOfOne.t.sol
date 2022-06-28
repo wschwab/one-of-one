@@ -33,7 +33,9 @@ contract ContractTest is DSTest {
     emit Transfer(address(0), owner, 0);
     ooo = new OneOfOne(
       address(0x314159265dD8dbb310642f98f50C066173C1259b),
-      0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985
+      0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985,
+      0x312d6f662d3120536f756c626f756e6400000000000000000000000000000000,
+      0x314f315300000000000000000000000000000000000000000000000000000000
     );
   }
 
@@ -147,10 +149,12 @@ contract ContractTest is DSTest {
   //      deployment tests          //
   ////////////////////////////////////
 
-  address ens = address(0x314159265dD8dbb310642f98f50C066173C1259b);
-  bytes32 namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
+  address _ens = address(0x314159265dD8dbb310642f98f50C066173C1259b);
+  bytes32 _namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
+  bytes32 _name = 0x312d6f662d3120536f756c626f756e6400000000000000000000000000000000;
+  bytes32 _symbol = 0x314f315300000000000000000000000000000000000000000000000000000000;
   IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
-  bytes code = abi.encodePacked(type(OneOfOne).creationCode, abi.encode(ens, namehash));
+  bytes code = abi.encodePacked(type(OneOfOne).creationCode, abi.encode(_ens, _namehash, _name, _symbol));
   bytes32 salt = keccak256(abi.encode("One-of-One Soulbound"));
 
   function testXDeployer() public {
