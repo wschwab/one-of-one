@@ -1,5 +1,6 @@
 # One-of-One Soulbound
 
+[![🕵️‍♂️ Test smart contracts](https://github.com/wschwab/one-of-one/actions/workflows/test-contracts.yml/badge.svg)](https://github.com/wschwab/one-of-one/actions/workflows/test-contracts.yml)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
 This is a minimalist one-of-one NFT contract with a couple of twists that are perhaps best illustrated with a brief description of what propelled me to write this contract.

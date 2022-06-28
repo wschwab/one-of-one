@@ -13,8 +13,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-        node_version:
-          - 16
 
     steps:
       - name: Checkout
@@ -29,9 +27,3 @@ jobs:
 
       - name: Foundry tests
         run: forge test --fork-url ${{ secrets.rpc_url }} -vvvv
-
-      - name: Slither static analyser
-        uses: crytic/slither-action@v0.1.1
-        continue-on-error: true
-        with:
-          node-version: ${{ matrix.node_version }}
