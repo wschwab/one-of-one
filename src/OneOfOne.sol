@@ -21,14 +21,15 @@ contract OneOfOne {
                         GLOBAL VARIABLES
   //////////////////////////////////////////////////////////////*/
 
-  string public constant name = "1-of-1 Soulbound";
-  string public constant symbol = "1O1S";
-  string private constant URI = "ipfs://QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
+  string private constant _URI = "ipfs://QmPBAmzESVbx88Vtd94dmg8GCy2q4xLU3zxJfAc3puC4tW";
+  
+  /// @notice We assume that `bytes32` is large enough to encode the name and symbol
+  bytes32 private immutable _name;
+  bytes32 private immutable _symbol;
   /// @notice ENS namehash used to determine NFT owner
-  bytes32 private immutable namehash;
+  bytes32 private immutable _namehash;
   /// @notice the ENS contract, needed to find the namehash's resolver
-  address private immutable ens;
-
+  address private immutable _ens;
 
   /*///////////////////////////////////////////////////////////////
                               EVENTS
@@ -43,11 +44,15 @@ contract OneOfOne {
   //////////////////////////////////////////////////////////////*/
 
   constructor(
-      address _ens,
-      bytes32 _namehash
+      address ens_,
+      bytes32 namehash_,
+      bytes32 name_,
+      bytes32 symbol_
   ) {
-    ens = _ens;
-    namehash = _namehash;
+    _ens = ens_;
+    _namehash = namehash_;
+    _name = name_;
+    _symbol = symbol_;
 
     // NFT is hardcoded in, all we need is the event
     emit Transfer(address(0), resolveAddress(), 0);
@@ -68,7 +73,15 @@ contract OneOfOne {
 
   function tokenURI(uint256 tokenId) public pure returns (string memory) {
     if(tokenId != 0) revert TokenIdDoesNotExist();
-    return URI;
+    return _URI;
+  }
+
+  function name() public view returns (string memory) {
+    return bytes32ToString(_name);
+  }
+
+  function symbol() public view returns (string memory) {
+    return bytes32ToString(_symbol);
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -76,10 +89,10 @@ contract OneOfOne {
   //////////////////////////////////////////////////////////////*/
 
   function resolveAddress() public view returns(address) {
-    (bool success, bytes memory returndata) = ens.staticcall(
+    (bool success, bytes memory returndata) = _ens.staticcall(
       abi.encodeWithSignature(
         "resolver(bytes32)",
-        namehash
+        _namehash
       )
     );
     if(!success) revert EnsCallFailed();
@@ -87,12 +100,16 @@ contract OneOfOne {
     (success, returndata) = resolver.staticcall(
       abi.encodeWithSignature(
         "addr(bytes32)",
-        namehash
+        _namehash
       )
     );
     if(!success) revert ResolverCallFailed();
     address owner = abi.decode(returndata, (address));
     return owner;
+  }
+
+  function bytes32ToString(bytes32 _bytes32) internal pure returns (string memory) {
+    return string(abi.encodePacked(_bytes32));
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -190,10 +207,12 @@ interface IxDeployer {
 }
 
 contract DeployToxDeployer {
-  address ens = address(0x314159265dD8dbb310642f98f50C066173C1259b);
-  bytes32 namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
-  IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2);
-  bytes code = abi.encodePacked(type(OneOfOne).creationCode, abi.encode(ens, namehash));
+  address _ens = address(0x314159265dD8dbb310642f98f50C066173C1259b);
+  bytes32 _namehash = 0xb77f95208cec8af4dec158916be641e4f07614e1fa019686396b7a6da91aa985;
+  bytes32 _name = 0x312d6f662d3120536f756c626f756e6400000000000000000000000000000000; // "1-of-1 Soulbound"
+  bytes32 _symbol = 0x314f315300000000000000000000000000000000000000000000000000000000; // "1O1S"
+  IxDeployer x = IxDeployer(0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2); // Reference: https://github.com/pcaversaccio/xdeployer
+  bytes code = abi.encodePacked(type(OneOfOne).creationCode, abi.encode(_ens, _namehash, _name, _symbol));
   bytes32 salt = keccak256(abi.encode("One-of-One Soulbound"));
   constructor() {
     x.deploy(0, salt, code);
