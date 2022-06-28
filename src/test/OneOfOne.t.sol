@@ -44,11 +44,11 @@ contract ContractTest is DSTest {
   }
 
   function testName() public {
-    assertEq(ooo.name(), "1-of-1 Soulbound");
+    assertEq(ooo.name(), string(abi.encodePacked(bytes32("1-of-1 Soulbound"))));
   }
 
   function testSymbol() public {
-    assertEq(ooo.symbol(), "1O1S");
+    assertEq(ooo.symbol(), string(abi.encodePacked(bytes32("1O1S"))));
   }
 
   function testOwnerOf() public {
